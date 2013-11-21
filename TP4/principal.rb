@@ -30,9 +30,9 @@ class Datos
 end
 
 def buscarPrecio()
-	largo=@NumResult
+	largo=@NumResult-1
 	ele=0
-    until ele>largo-1 do
+    until ele>largo do
          elemento = @lista_grupos[ele]
          url = Hpricot(open(elemento.link)) 
          url.search("h4[@class]").map{|cosa1|
