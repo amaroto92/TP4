@@ -66,7 +66,7 @@ def buscarPrecio()
 
 end
 
-def Iniciarbusqueda(link)
+def buscarDatos(link)
 	pagina = Hpricot(open(link))                      
 	puts pagina
     pagina.search("li[@class='item']").map{
@@ -90,11 +90,11 @@ def Iniciarbusqueda(link)
     
 end
 
-def buscarDatos(vartag)
+def Iniciarbusqueda(vartag)
 		vartag=vartag.chomp
 		vartag=vartag.chomp.gsub(" ","-")
 		link = ("http://bandcamp.com/tag/"+vartag)
-		Iniciarbusqueda(link)
+		buscarDatos(link)
 end
 	def ver_resultados (cant_result)    
 			if cant_result == 9
@@ -807,7 +807,7 @@ post '/param_busqueda' do  # Método que llama a la función que realiza la bús
 	$lista_artistas = []
 	$num_result = 0
 	tag = params[:campo].to_s	
-	buscarDatos(tag)
+	IniciarBusqueda(tag)
 	buscarPrecio()
 	ver_resultados ($NumResult)
 	redirect '/result'
