@@ -30,35 +30,22 @@ class Datos
 end
 
 def buscarPrecio()
-	largo=@NumResult-1
-	ele=0
-    until ele>largo do
-         elemento = @lista_grupos[ele]
-         url = Hpricot(open(elemento.link)) 
-         url.search("h4[@class]").map{|cosa1|
-         filtro = Hpricot( cosa1.to_s )
-         costoX = filtro.search("a[@id]").inner_html   
-         if costoX.downcase=="free download"
-			costoX="Gratis"
-		 else
-			costoX="Paga"
-		 end
-		 @lista_grupos[ele].costo=costoX
-         }
-         ele+=1
-      end
+	largo=$NumResult
+    puts largo
+
 end
 
 def Iniciarbusqueda(link)
-	pagina = Hpricot(open(link))                      
+	pagina = Hpricot(open(link))                      #link donde se extraen los artistas
+	puts pagina
     pagina.search("li[@class='item']").map{
-    |elemento|                
-    encontrado = Hpricot( elemento.to_s )
-    artista = encontrado.search("div[@class='itemsubtext']").inner_html 
-    album = encontrado.at("a[@href]")['title']                
-    link = encontrado.at("a[@href]")['href']                
+    |elemento|                 #encuentra la posicion de los artistas,
+    encontrado = Hpricot( elemento.to_s ) #indicados segun el link asignado
+    artista = encontrado.search("div[@class='itemsubtext']").inner_html #encuentra nombre del artista
+    album = encontrado.at("a[@href]")['title']                #encuentra nombre del album
+    link = encontrado.at("a[@href]")['href']                #encuentra link
     image = encontrado.search("div").at("img[@class]")['src']  
-    artistas = Datos.new()                
+    artistas = Datos.new()                #crea una instancia del artista encontrado
     artistas.album=album
     artistas.artista=artista
     artistas.link=link
@@ -68,19 +55,24 @@ def Iniciarbusqueda(link)
     }
     $lista_artistas=$lista_artistas[0..9]
     $lista_artistas.compact
-    $NumResult = $lista_artistas.length
     cantidad = $lista_artistas.length
-    buscarPrecio()
+
     ver_resultados (cantidad)
 end
 
-def buscarDatos(vartag) 
+def buscarDatos(vartag) #Metodo que se encarga de sacar la informacion del HTML, con ayuda de la biblioteca hpricot y open-uri
+	begin
 		vartag=vartag.chomp
 		vartag=vartag.chomp.gsub(" ","-")
 		link = ("http://bandcamp.com/tag/"+vartag)
 		Iniciarbusqueda(link)
+	rescue Exception => e
+	       redirect "/fail"
+		
+	end
+
 end
-def ver_resultados (cant_result)    
+	def ver_resultados (cant_result)    
 			if cant_result == 9
 				$imagen1 = $lista_artistas[$num_result].imagen			
 				$group1 = $lista_artistas[$num_result].artista
