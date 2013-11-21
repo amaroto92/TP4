@@ -86,9 +86,7 @@ def Iniciarbusqueda(link)
     }
     $lista_artistas=$lista_artistas[0..9]
     $lista_artistas.compact
-    cantidad = $lista_artistas.length
     $NumResult = $lista_artistas.length
-    buscarPrecio()
     
 end
 
@@ -810,6 +808,7 @@ post '/param_busqueda' do  # Método que llama a la función que realiza la bús
 	$num_result = 0
 	tag = params[:campo].to_s	
 	buscarDatos(tag)
+	buscarPrecio()
 	ver_resultados ($NumResult)
 	redirect '/result'
 		
