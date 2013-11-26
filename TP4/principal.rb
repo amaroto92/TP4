@@ -1,5 +1,5 @@
 #Tarea Programada 4
-#Lenguajes de Programación
+#Lenguajes de ProgramaciÃ³n
 #David Murillo
 #Andres Maroto
 #Adrian Siles
@@ -13,7 +13,7 @@ require 'open-uri'
 require 'hpricot'
 require 'rubygems';
 
-get '/' do            # Método que carga la pagina main 
+get '/' do            # MÃ©todo que carga la pagina main 
 	erb :Main
 end
 
@@ -24,59 +24,43 @@ $NumResult = 0
 $num_result = 0
 
 
-#Se crea la clase que va a contener los atributos con la información que se necesita
+#Se crea la clase que va a contener los atributos con la informaciÃ³n que se necesita
 class Datos
 	attr_accessor :album, :artista, :link, :costo, :imagen
 end
 
 def buscarPrecio()
-        largo=$NumResult-1
-
+        largo = ($lista_artistas.length)-1
         ele=0
-
     until ele>largo do
-
-         elemento = $lista_grupos[ele]
-
+         elemento = $lista_artistas[ele]
          url = Hpricot(open(elemento.link))
-
          url.search("h4[@class]").map{|cosa1|
-
          filtro = Hpricot( cosa1.to_s )
-
          costoX = filtro.search("a[@id]").inner_html
-
          if costoX.downcase=="free download"
-
-                        costoX="Gratis"
-
+                        $lista_artistas[ele].costo="Gratis"
                  else
-
-                        costoX="Paga"
-
+                        $lista_artistas[ele].costo="Paga"
                  end
-
-                 $lista_grupos[ele].costo=costoX
-
          }
-
          ele+=1
-
       end
-
+    cantidad = $lista_artistas.length
+    ver_resultados (cantidad)
 end
 
-def buscarDatos(link)
+def Iniciarbusqueda(link)
 	pagina = Hpricot(open(link))                      
 	puts pagina
     pagina.search("li[@class='item']").map{
-    |elemento|                 
+    |elemento|                
     encontrado = Hpricot( elemento.to_s ) 
     artista = encontrado.search("div[@class='itemsubtext']").inner_html 
-    album = encontrado.at("a[@href]")['title']                
-    link = encontrado.at("a[@href]")['href']                
+    album = encontrado.at("a[@href]")['title']           
+    link = encontrado.at("a[@href]")['href']               
     image = encontrado.search("div").at("img[@class]")['src']  
-    artistas = Datos.new()                
+    artistas = Datos.new()               
     artistas.album=album
     artistas.artista=artista
     artistas.link=link
@@ -86,16 +70,16 @@ def buscarDatos(link)
     }
     $lista_artistas=$lista_artistas[0..9]
     $lista_artistas.compact
-    $NumResult = $lista_artistas.length
-    
+    buscarPrecio()
 end
 
-def Iniciarbusqueda(vartag)
+def buscarDatos(vartag) 
 		vartag=vartag.chomp
 		vartag=vartag.chomp.gsub(" ","-")
 		link = ("http://bandcamp.com/tag/"+vartag)
-		buscarDatos(link)
+		Iniciarbusqueda(link)
 end
+
 	def ver_resultados (cant_result)    
 			if cant_result == 9
 				$imagen1 = $lista_artistas[$num_result].imagen			
@@ -803,26 +787,24 @@ end
 
 
 
-post '/param_busqueda' do  # Método que llama a la función que realiza la búsqueda, capta el tag de busqueda y abre la pagina de resultados
+post '/param_busqueda' do  # MÃ©todo que llama a la funciÃ³n que realiza la bÃºsqueda, capta el tag de busqueda y abre la pagina de resultados
 	$lista_artistas = []
 	$num_result = 0
 	tag = params[:campo].to_s	
-	IniciarBusqueda(tag)
-	buscarPrecio()
-	ver_resultados ($NumResult)
+	buscarDatos(tag)
 	redirect '/result'
 		
 end
 
 
-get '/fail' do   # Método que carga la pagina de fail
+get '/fail' do   # MÃ©todo que carga la pagina de fail
   erb :'Fail'
 end
 
 
 
 	
-get '/result' do   # Método que redirecciona a la pag de resultados en donde se muestran las imagenes.
+get '/result' do   # MÃ©todo que redirecciona a la pag de resultados en donde se muestran las imagenes.
 	erb :resultados
 	
 end
