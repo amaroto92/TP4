@@ -29,9 +29,9 @@ class Datos
 	attr_accessor :album, :artista, :link, :costo, :imagen
 end
 
-def buscarPrecio()
-        largo = ($lista_artistas.length)-1
-        ele=0
+def buscarPrecio() #funcion que buscara el precio de cada uno de los elementos en la lista que contiene cada uno de los resultados
+        largo = ($lista_artistas.length)-1 #para esto, se ubica en cada uno de los objetos resultado que abria en cada posicion de la lista
+        ele=0                               # y con el url que almacena, accesa la informacion del album y obtiene el html que le permite determinar si es de paga o gratis
     until ele>largo do
          elemento = $lista_artistas[ele]
          url = Hpricot(open(elemento.link))
@@ -50,9 +50,9 @@ def buscarPrecio()
     ver_resultados (cantidad)
 end
 
-def Iniciarbusqueda(link)
-	pagina = Hpricot(open(link))                      
-	puts pagina
+def Iniciarbusqueda(link) # funcion que buscara en el un html que se convierte en una lista, que luego 
+	pagina = Hpricot(open(link)) # se buscara la etiqueta li[@class='item'] que determina donde se ubica determinada informacion
+	puts pagina                     # en este caso la informacion de cada resultado de la busqueda por el tag
     pagina.search("li[@class='item']").map{
     |elemento|                
     encontrado = Hpricot( elemento.to_s ) 
